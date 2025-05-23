@@ -2,7 +2,7 @@
 
 This project is based on [A2Pico](https://github.com/oliverschmidt/a2pico).
 
-This firmware does not __emulate__ a [Super Serial Card (SSC)](https://en.wikipedia.org/wiki/Apple_II_serial_cards#Super_Serial_Card_(Apple_Computer)). Rather, it is __compatible__ to a SSC, primarily because it uses the original, unmodified SSC 6502 firmware. The main differences from the SSC are:
+This firmware does not __emulate__ a [Super Serial Card (SSC)](https://en.wikipedia.org/wiki/Apple_II_serial_cards#Super_Serial_Card_(Apple_Computer)). Rather, it is __compatible__ to a SSC, primarily because it uses the original, unmodified SSC 6502 firmware. The main differences from a SSC are:
 * There is a USB interface instead of an RS-232 interface.
 * There is no UART (not even a virtual one). Therefore, the usual connection settings like `9600 Baud` are meaningless.
 * The actual connection speed is implicitly always _the highest that both communicating parties can achieve without data loss_. This is usually significantly faster than anything possible with a SSC (incl. its `115.200 Baud` mode).
