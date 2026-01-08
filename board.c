@@ -36,7 +36,7 @@ static volatile bool active;
 static volatile uint32_t ser_command;
 static volatile uint32_t ser_control;
 
-static uint8_t bits[] = {
+static const uint8_t __not_in_flash("bits") bits[] = {
     0b11111111,
     0b01111111,
     0b00111111,
@@ -94,7 +94,7 @@ static void __time_critical_func(ser_control_get)(void) {
     a2pico_putdata(pio0, ser_control);
 }
 
-void (*devsel_get[])(void) = {
+static const void __not_in_flash("devsel_get") (*devsel_get[])(void) = {
     nop_get,      ser_dipsw1_get, ser_dipsw2_get,  nop_get,
     nop_get,      nop_get,        nop_get,         nop_get,
     ser_data_get, ser_status_get, ser_command_get, ser_control_get,
@@ -121,7 +121,7 @@ static void __time_critical_func(ser_control_put)(uint32_t data) {
     mask = bits[(data >> 5) & 0b11];
 }
 
-void (*devsel_put[])(uint32_t) = {
+static const void __not_in_flash("devsel_put") (*devsel_put[])(uint32_t) = {
     nop_put,      nop_put,       nop_put,         nop_put,
     nop_put,      nop_put,       nop_put,         nop_put,
     ser_data_put, ser_reset_put, ser_command_put, ser_control_put,
