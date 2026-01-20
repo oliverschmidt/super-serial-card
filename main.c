@@ -29,6 +29,7 @@ SOFTWARE.
 #include <pico/stdlib.h>
 #include <pico/multicore.h>
 #include <hardware/clocks.h>
+#include <hardware/structs/busctrl.h>
 
 #include "board.h"
 
@@ -47,9 +48,10 @@ void uart_printf(uart_inst_t *uart, const char *format, ...) {
 }
 
 void main(void) {
+    busctrl_hw->priority = BUSCTRL_BUS_PRIORITY_PROC1_BITS;
     multicore_launch_core1(board);
 
-    set_sys_clock_khz(150000, false);
+    set_sys_clock_khz(200000, false);
 
     stdio_init_all();
     stdio_set_translate_crlf(&stdio_usb, false);
