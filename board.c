@@ -62,7 +62,7 @@ static void __time_critical_func(ser_dipsw1_get)(void) {
                         // 0001     9600 baud
                         //     00   <zero>
                         //       01 printer mode
-    a2pico_putdata(pio0, 0b11101110);
+    a2pico_putdata(0b11101110);
 }
 
 static void __time_critical_func(ser_dipsw2_get)(void) {
@@ -73,25 +73,25 @@ static void __time_critical_func(ser_dipsw2_get)(void) {
                         //     11   40 cols
                         //       1  auto-lf
                         //        0 cts line (not dipsw2)   
-    a2pico_putdata(pio0, 0b01110000);
+    a2pico_putdata(0b01110000);
 }
 
 static void __time_critical_func(ser_data_get)(void) {
-    a2pico_putdata(pio0, sio_hw->fifo_rd & mask);
+    a2pico_putdata(sio_hw->fifo_rd & mask);
 }
 
 static void __time_critical_func(ser_status_get)(void) {
     // SIO_FIFO_ST_VLD_BITS _u(0x00000001)
     // SIO_FIFO_ST_RDY_BITS _u(0x00000002)
-    a2pico_putdata(pio0, (sio_hw->fifo_st & 3) << 3);
+    a2pico_putdata((sio_hw->fifo_st & 3) << 3);
 }
 
 static void __time_critical_func(ser_command_get)(void) {
-    a2pico_putdata(pio0, ser_command);
+    a2pico_putdata(ser_command);
 }
 
 static void __time_critical_func(ser_control_get)(void) {
-    a2pico_putdata(pio0, ser_control);
+    a2pico_putdata(ser_control);
 }
 
 static const void __not_in_flash("devsel_get") (*devsel_get[])(void) = {
@@ -130,27 +130,27 @@ static const void __not_in_flash("devsel_put") (*devsel_put[])(uint32_t) = {
 
 void __time_critical_func(board)(void) {
 
-    a2pico_init(pio0);
+    a2pico_init();
 
     a2pico_resethandler(&reset);
 
     while (true) {
-        uint32_t pico = a2pico_getaddr(pio0);
+        uint32_t pico = a2pico_getaddr();
         uint32_t addr = pico & 0x0FFF;
         uint32_t io   = pico & 0x0F00;      // IOSTRB or IOSEL
         uint32_t strb = pico & 0x0800;      // IOSTRB
-        uint32_t read = pico & 0x1000;      // R/W
+        uint32_t read = pico & RW_BIT;      // R/W
 
         if (read) {
             if (!io) {  // DEVSEL
                 devsel_get[addr & 0xF]();
             } else if (!strb) {  // IOSEL
-                a2pico_putdata(pio0, firmware[addr | 0x0700]);
+                a2pico_putdata(firmware[addr | 0x0700]);
             } else if (active && (addr != 0x0FFF)) {  // IOSTRB
-                a2pico_putdata(pio0, firmware[addr & 0x07FF]);
+                a2pico_putdata(firmware[addr & 0x07FF]);
             }
         } else {
-            uint32_t data = a2pico_getdata(pio0);
+            uint32_t data = a2pico_getdata();
             if (!io) {  // DEVSEL
                 devsel_put[addr & 0xF](data);
             }
