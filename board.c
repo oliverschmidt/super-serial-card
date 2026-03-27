@@ -42,7 +42,7 @@ static const uint8_t __not_in_flash("bits") bits[] = {
     0b00111111,
     0b00011111};
 
-static volatile uint8_t mask;
+static volatile uint8_t mask = bits[0b00];
 
 static void __time_critical_func(reset)(bool asserted) {
     if (asserted) {
