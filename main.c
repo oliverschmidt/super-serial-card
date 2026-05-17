@@ -56,10 +56,12 @@ void main(void) {
     stdio_init_all();
     stdio_set_translate_crlf(&stdio_usb, false);
 
+#ifdef RASPBERRYPI_PICO
     uart_init(uart0, 115200);
     uart_set_translate_crlf(uart0, true);
     gpio_set_function(PICO_DEFAULT_UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(PICO_DEFAULT_UART_RX_PIN, GPIO_FUNC_UART);
+#endif
 
     while (true) {
         if (multicore_fifo_rvalid()) {
