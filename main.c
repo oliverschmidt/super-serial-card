@@ -31,6 +31,8 @@ SOFTWARE.
 #include <hardware/clocks.h>
 #include <hardware/structs/busctrl.h>
 
+#include <a2pico.h>
+
 #include "board.h"
 
 static uint32_t mode, rx, tx;
@@ -56,12 +58,12 @@ void main(void) {
     stdio_init_all();
     stdio_set_translate_crlf(&stdio_usb, false);
 
-#ifdef RASPBERRYPI_PICO
-    uart_init(uart0, 115200);
-    uart_set_translate_crlf(uart0, true);
-    gpio_set_function(PICO_DEFAULT_UART_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(PICO_DEFAULT_UART_RX_PIN, GPIO_FUNC_UART);
-#endif
+    if (a2pico_tx() >= 0 && a2pico_rx() >= 0) {
+        uart_init(uart0, 115200);
+        uart_set_translate_crlf(uart0, true);
+        gpio_set_function(a2pico_tx(), UART_FUNCSEL_NUM(uart0, a2pico_tx()));
+        gpio_set_function(a2pico_rx(), UART_FUNCSEL_NUM(uart0, a2pico_rx()));
+    }
 
     while (true) {
         if (multicore_fifo_rvalid()) {
